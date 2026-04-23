@@ -12,6 +12,16 @@ body {
     justify-content: center;
     align-items: center;
     color: #333;
+    padding: 20px;
+}
+
+/* Main Container for side-by-side layout */
+.main-container {
+    display: flex;
+    gap: 30px;
+    max-width: 1200px;
+    width: 100%;
+    align-items: flex-start;
 }
 
 .game-container {
@@ -41,7 +51,7 @@ h1 {
     border: 2px solid #e2e8f0;
 }
 
-.score, .high-score {
+.score, .high-score, .level {
     font-size: 1.2em;
     font-weight: bold;
     color: #2d3748;
@@ -49,6 +59,11 @@ h1 {
 
 .score span, .high-score span {
     color: #38a169;
+}
+
+.level span {
+    color: #4299e1;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .game-area {
@@ -149,28 +164,514 @@ h1 {
     cursor: not-allowed;
 }
 
+/* Mobile Controls */
+.mobile-controls {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 15px;
+    border: 2px solid #4299e1;
+}
+
+.mobile-controls-row {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.mobile-btn {
+    width: 80px;
+    height: 80px;
+    font-size: 32px;
+    border: 4px solid #4299e1;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #ffffff, #e2e8f0);
+    color: #2d3748;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+}
+
+.mobile-btn:hover {
+    background: linear-gradient(145deg, #4299e1, #3182ce);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(66, 153, 225, 0.4);
+    border-color: #3182ce;
+}
+
+.mobile-btn:active,
+.mobile-btn.active {
+    transform: translateY(1px);
+    background: linear-gradient(145deg, #3182ce, #2c5282);
+    color: white;
+    box-shadow: 0 2px 6px rgba(66, 153, 225, 0.4);
+    border-color: #2c5282;
+}
+
+/* Add touch feedback for better mobile experience */
+.mobile-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+/* Hide mobile controls on desktop */
+@media (min-width: 769px) {
+    .mobile-controls {
+        display: none;
+    }
+}
+
+/* Show mobile controls only on actual touch devices */
+@media (max-width: 768px) and (pointer: coarse) {
+    .mobile-controls {
+        display: flex !important;
+    }
+}
+
+/* Enhanced mobile controls for small screens */
+@media (max-width: 480px) {
+    .mobile-controls {
+        margin: 15px 0;
+        padding: 15px;
+        gap: 12px;
+    }
+    
+    .mobile-controls-row {
+        gap: 12px;
+    }
+    
+    .mobile-btn {
+        width: 70px;
+        height: 70px;
+        font-size: 28px;
+    }
+}
+
 /* Mobile responsiveness */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     .game-container {
-        margin: 20px;
-        padding: 20px;
+        margin: 10px;
+        padding: 15px;
+        max-width: 95vw;
     }
 
     h1 {
         font-size: 2em;
+        margin-bottom: 15px;
     }
 
     #gameCanvas {
-        width: 300px;
-        height: 300px;
+        width: min(350px, 90vw);
+        height: min(350px, 90vw);
     }
 
     .game-info {
         flex-direction: column;
         gap: 10px;
+        font-size: 0.9em;
     }
 
     .game-controls {
         flex-direction: column;
+        gap: 10px;
+    }
+
+    .controls {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .controls p {
+        font-size: 1em;
+    }
+
+    /* Show mobile controls on mobile */
+    .mobile-controls {
+        display: flex;
+        margin: 15px 0;
+    }
+
+    /* Make mobile buttons more touch-friendly */
+    .mobile-btn {
+        width: 85px;
+        height: 85px;
+        font-size: 36px;
+        border-width: 3px;
+    }
+    
+    .mobile-controls-row {
+        gap: 12px;
     }
 }
+
+/* Level System Styles */
+.level-progress {
+    background: #f7fafc;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+    margin-bottom: 20px;
+}
+
+.progress-label {
+    font-size: 1em;
+    font-weight: bold;
+    color: #2d3748;
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    position: relative;
+    width: 100%;
+    height: 25px;
+    background: #e2e8f0;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 2px solid #cbd5e0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(45deg, #4299e1, #3182ce);
+    border-radius: 13px;
+    transition: width 0.5s ease;
+    width: 0%;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #2d3748;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* Level Up Notification */
+.level-up-notification {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4a 100%);
+    border: 4px solid #f6e05e;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    display: none;
+    animation: levelUpPulse 0.6s ease-in-out;
+}
+
+.level-up-notification h3 {
+    color: #744210;
+    margin-bottom: 15px;
+    font-size: 1.8em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.level-up-notification p {
+    color: #744210;
+    font-size: 1.3em;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.level-bonus {
+    color: #e53e3e !important;
+    font-size: 1.1em !important;
+    font-style: italic;
+}
+
+@keyframes levelUpPulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Mobile adjustments for level system */
+@media (max-width: 768px) {
+    .game-info {
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .score, .high-score, .level {
+        font-size: 1em;
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .level-progress {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+
+    .progress-label {
+        font-size: 0.9em;
+    }
+
+    .progress-bar {
+        height: 22px;
+    }
+
+    .progress-text {
+        font-size: 0.8em;
+    }
+
+    .level-up-notification {
+        padding: 25px 20px;
+        border-radius: 15px;
+        max-width: 90vw;
+    }
+
+    .level-up-notification h3 {
+        font-size: 1.5em;
+        margin-bottom: 12px;
+    }
+
+    .level-up-notification p {
+        font-size: 1.1em;
+        margin: 8px 0;
+    }
+}
+
+/* Leaderboard Styles */
+.leaderboard-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    min-width: 300px;
+    max-width: 350px;
+    width: 100%;
+    height: fit-content;
+}
+
+.leaderboard-container h2 {
+    color: #4a5568;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.leaderboard-header {
+    display: grid;
+    grid-template-columns: 60px 1fr 60px;
+    gap: 10px;
+    background: #4299e1;
+    color: white;
+    padding: 12px 15px;
+    border-radius: 10px 10px 0 0;
+    font-weight: bold;
+    font-size: 0.95em;
+}
+
+.leaderboard-list {
+    background: #f7fafc;
+    border-radius: 0 0 10px 10px;
+    border: 2px solid #e2e8f0;
+    border-top: none;
+    min-height: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.leaderboard-entry {
+    display: grid;
+    grid-template-columns: 60px 1fr 60px;
+    gap: 10px;
+    padding: 12px 15px;
+    border-bottom: 1px solid #e2e8f0;
+    transition: background-color 0.2s ease;
+    align-items: center;
+}
+
+.leaderboard-entry:hover:not(.empty) {
+    background: #edf2f7;
+}
+
+.leaderboard-entry:last-child {
+    border-bottom: none;
+}
+
+.leaderboard-entry.highlight {
+    background: #e6fffa;
+    border-left: 4px solid #38a169;
+    animation: highlightScore 2s ease-out;
+}
+
+.rank {
+    font-weight: bold;
+    color: #2d3748;
+    font-size: 1.1em;
+}
+
+.score {
+    font-weight: bold;
+    color: #38a169;
+    font-size: 1.1em;
+    text-align: center;
+}
+
+.level {
+    font-weight: bold;
+    color: #4299e1;
+    font-size: 1em;
+    text-align: center;
+}
+
+.leaderboard-entry.empty {
+    color: #a0aec0;
+    font-style: italic;
+    justify-content: center;
+    grid-template-columns: 1fr;
+    padding: 40px 15px;
+}
+
+.leaderboard-footer {
+    margin-top: 20px;
+}
+
+.clear-btn {
+    background: #e53e3e;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.clear-btn:hover {
+    background: #c53030;
+}
+
+.clear-btn:disabled {
+    background: #a0aec0;
+    cursor: not-allowed;
+}
+
+/* Trophy icons for top ranks */
+.rank[data-rank="1"]:before {
+    content: "🥇 ";
+}
+
+.rank[data-rank="2"]:before {
+    content: "🥈 ";
+}
+
+.rank[data-rank="3"]:before {
+    content: "🥉 ";
+}
+
+/* New score highlight animation */
+@keyframes highlightScore {
+    0% {
+        background: #ffd700;
+        transform: scale(1.02);
+    }
+    50% {
+        background: #e6fffa;
+    }
+    100% {
+        background: #edf2f7;
+        transform: scale(1);
+    }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 1024px) {
+    .main-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        max-width: 600px;
+    }
+
+    .leaderboard-container {
+        max-width: 100%;
+        width: 100%;
+        min-width: unset;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .main-container {
+        gap: 15px;
+    }
+
+    .leaderboard-container {
+        padding: 20px;
+        margin-top: 0;
+    }
+
+    .leaderboard-container h2 {
+        font-size: 1.5em;
+        margin-bottom: 15px;
+    }
+
+    .leaderboard-header,
+    .leaderboard-entry {
+        grid-template-columns: 50px 1fr 50px;
+        padding: 10px 12px;
+        font-size: 0.9em;
+    }
+
+    .leaderboard-list {
+        min-height: 250px;
+        max-height: 300px;
+    }
+
+    .rank, .score, .level {
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .leaderboard-container {
+        padding: 15px;
+    }
+
+    .leaderboard-header,
+    .leaderboard-entry {
+        padding: 8px 10px;
+        font-size: 0.85em;
+    }
+
+    .leaderboard-list {
+        min-height: 200px;
+        max-height: 250px;
+    }
+}/* Mobile controls added */

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Snake Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #333;
+            color: white;
+            font-family: Arial;
+            text-align: center;
+        }
+        #gameCanvas {
+            border: 2px solid white;
+            background: #111;
+        }
+    </style>
+</head>
+<body>
+    <h1>🐍 Simple Snake Test</h1>
+    <p>Use arrow keys to move</p>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <p id="status">Loading...</p>
+
+    <script>
+        console.log("🟢 Script starting...");
+
+        class SimpleSnake {
+            constructor() {
+                console.log("🟢 Initializing game...");
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.status = document.getElementById('status');
+
+                if (!this.canvas || !this.ctx) {
+                    console.error("❌ Canvas not found!");
+                    this.status.textContent = "❌ Canvas error!";
+                    return;
+                }
+
+                this.gridSize = 20;
+                this.snake = [{x: 10, y: 10}];
+                this.dx = 1;
+                this.dy = 0;
+                this.food = {x: 15, y: 15};
+
+                this.setupControls();
+                this.status.textContent = "✅ Game ready! Use arrow keys";
+                console.log("🟢 Game initialized successfully");
+                this.gameLoop();
+            }
+
+            setupControls() {
+                document.addEventListener('keydown', (e) => {
+                    console.log("🎮 Key pressed:", e.code);
+                    switch(e.code) {
+                        case 'ArrowUp': this.dx = 0; this.dy = -1; break;
+                        case 'ArrowDown': this.dx = 0; this.dy = 1; break;
+                        case 'ArrowLeft': this.dx = -1; this.dy = 0; break;
+                        case 'ArrowRight': this.dx = 1; this.dy = 0; break;
+                    }
+                });
+            }
+
+            gameLoop() {
+                // Move snake
+                const head = {
+                    x: this.snake[0].x + this.dx,
+                    y: this.snake[0].y + this.dy
+                };
+
+                // Wrap around walls (for testing)
+                if (head.x < 0) head.x = 19;
+                if (head.x >= 20) head.x = 0;
+                if (head.y < 0) head.y = 19;
+                if (head.y >= 20) head.y = 0;
+
+                this.snake.unshift(head);
+
+                // Check food
+                if (head.x === this.food.x && head.y === this.food.y) {
+                    this.food = {
+                        x: Math.floor(Math.random() * 20),
+                        y: Math.floor(Math.random() * 20)
+                    };
+                } else {
+                    this.snake.pop();
+                }
+
+                // Draw everything
+                this.draw();
+
+                // Continue loop
+                setTimeout(() => this.gameLoop(), 200);
+            }
+
+            draw() {
+                // Clear canvas
+                this.ctx.fillStyle = '#111';
+                this.ctx.fillRect(0, 0, 400, 400);
+
+                // Draw snake
+                this.ctx.fillStyle = '#0f0';
+                this.snake.forEach(segment => {
+                    this.ctx.fillRect(
+                        segment.x * this.gridSize,
+                        segment.y * this.gridSize,
+                        this.gridSize - 2,
+                        this.gridSize - 2
+                    );
+                });
+
+                // Draw food
+                this.ctx.fillStyle = '#f00';
+                this.ctx.fillRect(
+                    this.food.x * this.gridSize,
+                    this.food.y * this.gridSize,
+                    this.gridSize - 2,
+                    this.gridSize - 2
+                );
+            }
+        }
+
+        // Start when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("🟢 DOM loaded, starting game...");
+            new SimpleSnake();
+        });
+
+        console.log("🟢 Script loaded completely");
+    </script>
+</body>
+</html>

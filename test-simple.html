@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Test</title>
+</head>
+<body>
+    <h1>Game Test</h1>
+    <canvas id="gameCanvas" width="400" height="400" style="border: 1px solid black;"></canvas>
+
+    <script>
+        console.log("Test starting...");
+
+        try {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Test basic drawing
+            ctx.fillStyle = 'green';
+            ctx.fillRect(50, 50, 20, 20);
+
+            // Test apple drawing
+            const x = 100;
+            const y = 100;
+            const size = 20;
+            const centerX = x + size / 2;
+            const centerY = y + size / 2;
+            const radius = (size - 4) / 2;
+
+            // Simple apple body
+            ctx.fillStyle = '#e53e3e';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius * 0.9, 0, 2 * Math.PI);
+            ctx.fill();
+
+            console.log("Basic drawing works!");
+
+        } catch (error) {
+            console.error("Error:", error);
+            document.body.innerHTML += "<p style='color: red;'>Error: " + error.message + "</p>";
+        }
+    </script>
+</body>
+</html>

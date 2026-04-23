@@ -101,4 +101,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Enjoy playing Snake! 🐍🎮
+Enjoy playing Snake! 🐍🎮# Game updated
